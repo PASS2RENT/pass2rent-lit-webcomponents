@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+<file target-language="fr" source-language="en" original="lit-localize-inputs" datatype="plaintext">
+<body>
+<trans-unit id="s1c81603e5fd7cb3b">
+  <source>Pickup date</source>
+  <target>Date de départ</target>
+</trans-unit>
+<trans-unit id="s7e78a252c1895781">
+  <source>Return date</source>
+  <target>Date de retour</target>
+</trans-unit>
+<trans-unit id="s9db4bbcd7f6765e2">
+  <source>Air conditioning</source>
+</trans-unit>
+<trans-unit id="s614300b97f197ac0">
+  <source><x id="0" equiv-text="${equipment.value}"/> doors</source>
+</trans-unit>
+<trans-unit id="s3a9080684e86c938">
+  <source>Unspecified Fuel</source>
+</trans-unit>
+<trans-unit id="sd48bddca1c0e89af">
+  <source>Diesel</source>
+</trans-unit>
+<trans-unit id="s6032372e5812d743">
+  <source>Hybrid</source>
+</trans-unit>
+<trans-unit id="s2864e10d28d8587e">
+  <source>Electric</source>
+</trans-unit>
+<trans-unit id="s13aaffca86805fe0">
+  <source>LPG/Gas</source>
+</trans-unit>
+<trans-unit id="s65801a5f9b658a15">
+  <source>Hydrogen</source>
+</trans-unit>
+<trans-unit id="s7db87560e1fdfc26">
+  <source>Multi fuel</source>
+</trans-unit>
+<trans-unit id="sc143f60df02f8067">
+  <source>Petrol</source>
+</trans-unit>
+<trans-unit id="sdf52465ea37a5be0">
+  <source>Ethanol</source>
+</trans-unit>
+<trans-unit id="sc9e494c8346b7cb5">
+  <source>Other</source>
+</trans-unit>
+<trans-unit id="seabf9019983e6183">
+  <source>GPS</source>
+</trans-unit>
+<trans-unit id="s2183fa37a31e59bf">
+  <source><x id="0" equiv-text="${equipment.value}"/> km</source>
+</trans-unit>
+<trans-unit id="s02d60e49f72657db">
+  <source>unlimited distance</source>
+</trans-unit>
+<trans-unit id="s42cebfd8a4525292">
+  <source><x id="0" equiv-text="${equipment.value}"/> seats}</source>
+</trans-unit>
+<trans-unit id="sad32479ffac0f82b">
+  <source>Manual drive</source>
+</trans-unit>
+<trans-unit id="s92810e348061903a">
+  <source>Manual, 4WD</source>
+</trans-unit>
+<trans-unit id="s34ee1b34dbc4cfe1">
+  <source>Manual, AWD</source>
+</trans-unit>
+<trans-unit id="s766ab1f48b4e0e66">
+  <source>Auto drive</source>
+</trans-unit>
+<trans-unit id="s0f2eb9b35bd6b2a9">
+  <source>Auto, 4WD</source>
+</trans-unit>
+<trans-unit id="saa300cb4d5a4f982">
+  <source>Auto, AWD</source>
+</trans-unit>
+<trans-unit id="sc790a88a93a60802">
+  <source><x id="0" equiv-text="${discountPrice.pricePerUnit} ${this.bookingPlan.currency}"/>/<x id="1" equiv-text="${this.getPeriodLabel(priceItem.rentDurationUnit, false)}"/></source>
+</trans-unit>
+<trans-unit id="s8587736730c8b7ea">
+  <source>days</source>
+</trans-unit>
+<trans-unit id="sca8d3918f4578f1d">
+  <source>day</source>
+</trans-unit>
+<trans-unit id="s4d41317b4e57e7f4">
+  <source>hours</source>
+</trans-unit>
+<trans-unit id="s407efecc7eb5764f">
+  <source>hour</source>
+</trans-unit>
+<trans-unit id="scbeff7c3e03228ae">
+  <source>minutes</source>
+</trans-unit>
+<trans-unit id="s5bb2f9bdf2fad1e9">
+  <source>minute</source>
+</trans-unit>
+<trans-unit id="sd8a0d0cc52fdaf39">
+  <source>until <x id="0" equiv-text="${toDate}"/></source>
+</trans-unit>
+<trans-unit id="sa2a57f4ca828f912">
+  <source>From <x id="0" equiv-text="${fromDate}"/> to <x id="1" equiv-text="${toDate}"/></source>
+</trans-unit>
+</body>
+</file>
+</xliff>
