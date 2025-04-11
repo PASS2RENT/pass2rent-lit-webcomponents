@@ -22,7 +22,7 @@ import {msg} from "@lit/localize";
 import {PropertyDeclaration} from "@lit/reactive-element";
 import {ServiceApi} from "./services/service-api.ts";
 import {VehicleCategoryServiceApi} from "./services/vehicle-category-service-api.ts";
-import {VehicleCategory} from "./model/vehicle-category.ts";
+import {VehicleCategoryBookingPublic} from "./model/generated";
 
 /**
  * This is the root default element for the booking system.
@@ -37,7 +37,7 @@ export class BookingElement extends LitElement {
     @property({ type: String })
     apiKey:string = "";
 
-    _vehicleCategories?: VehicleCategory[];
+    _vehicleCategories?: VehicleCategoryBookingPublic[];
 
     render() {
         return html`

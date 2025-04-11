@@ -1,7 +1,7 @@
 
 document.querySelector('#app').innerHTML = `
   <div>
-    <pass2rent-booking-element apiUrl="http://localhost:8080/api" apiKey="a7d9ea9b-ceb3-4e77-948e-8e47b002f214"></pass2rent-booking-element>
+    <pass2rent-booking-element apiUrl="http://localhost:8080" apiKey="8cd39cc2-0c5b-4954-ae2b-c920f8b78b0e"></pass2rent-booking-element>
   </div>
 `
 

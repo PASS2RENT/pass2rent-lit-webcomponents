@@ -6,16 +6,31 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "gen:types": "orval --config ./orval.config.ts"
   },
   "devDependencies": {
     "@lit/localize-tools": "^0.8.0",
+    "orval": "^7.8.0",
+    "prettier": "^3.5.3",
     "vite": "^5.4.1"
   },
   "dependencies": {
     "@lit/localize": "^0.12.2",
+    "@mapbox/search-js-web": "^1.0.0-beta.22",
+    "@power-elements/stripe-elements": "^3.3.0",
+    "@vaadin/checkbox": "^24.5.3",
+    "@vaadin/combo-box": "^24.5.3",
     "@vaadin/date-time-picker": "^24.4.10",
     "@vaadin/dialog": "^24.4.10",
-    "@vaadin/form-layout": "^24.4.10"
+    "@vaadin/email-field": "^24.5.3",
+    "@vaadin/form-layout": "^24.4.10",
+    "@vaadin/icon": "^24.5.3",
+    "@vaadin/icons": "^24.5.3",
+    "@vaadin/radio-group": "^24.5.3",
+    "@vaadin/select": "^24.5.3",
+    "@vaadin/text-field": "^24.5.3",
+    "axios": "^1.8.4",
+    "intl-tel-input": "^24.7.0"
   }
 }

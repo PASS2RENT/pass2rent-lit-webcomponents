@@ -12,62 +12,101 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-import {customElement, property} from "lit/decorators.js";
+import {customElement, property, state} from "lit/decorators.js";
 import {css, html, LitElement} from "lit";
-import {BookingPlan, DiscountPrice, Period, TimeDependantPriceOption} from "../model/pricing.ts";
-import {msg, str} from "@lit/localize";
+import {msg} from "@lit/localize";
+
+import './booking-options-element.ts';
+import '@vaadin/form-layout';
+import '@vaadin/radio-group';
+import '@vaadin/checkbox';
+import '@vaadin/select';
+import {BookingPlanDetailImpl} from "../model/bookingPlanDetailImpl.ts";
+import {BookingPlanDetail} from "../model/generated";
 
 @customElement('booking-plan-summary')
 export class BookingPlanSummary extends LitElement {
 
-    @property({ type: BookingPlan })
-    bookingPlan: BookingPlan = new BookingPlan("EUR", 800, 500, 0.21, new Array<TimeDependantPriceOption>());
+    @property({ type: BookingPlanDetailImpl })
+    bookingPlan: BookingPlanDetail = {
+        currency: {
+            currencyCode: 'EUR',
+        },
+        excessAmount: 800,
+        cancelationFee: 500,
+        freeCancellationLimit: 3,
+        freeCancellationLimitUnit: "Days",
+        bookingOptions: [
+            {
+                type: "EXCESS_PROTECTION",
+            }
+        ]
+    }
 
     @property({ type: String })
     format: String = "full";
 
-    render() {
-        // This is the component for the list of categories version....
+    @state()
+    private items = [
+        {
+            label: '0',
+            value: '0',
+        },
+        {
+            label: '1',
+            value: '1',
+        },
+        {
+            label: '2',
+            value: '2',
+        }
+    ];
 
-        let index: number = 0;
+    render() {
+
         return html`
             <div class="wrapper ${this.format}">
-                ${this.format === 'small' ? '' : html`<div class="pricing-title">${ msg('Pricing') }</div>`}
-                <ul>
-                ${this.bookingPlan.priceItems.map((priceItem: TimeDependantPriceOption) => {
-                    if (this.format === 'small' && index === (this.bookingPlan.priceItems!.length - 1) || this.format === 'full') {
-                        // For each option, we display at first the normal price
-                        let discountDisplayed: boolean = false;
-                        let hasDiscount: boolean = priceItem.discountPrices != undefined && priceItem.discountPrices?.length > 0;
-                        return html`
-                            <li class="price-item ${hasDiscount ? 'has-discount' : ''}">
-                                <div class="normal-price">
-                                    ${this.format === 'small' ? html`<span class="prefix">${ msg('From') }</span>` : 
-                                            html`<span class="prefix">${msg(str`${priceItem.minRentDuration}-${priceItem.maxRentDuration} ${this.getPeriodLabel(priceItem.rentDurationUnit, true)} : `)}</span>` }
-                                    <span class="price">${msg(str`${priceItem.pricePerUnit} ${this.formatCurrency(this.bookingPlan.currency)}/${this.getPeriodLabel(priceItem.rentDurationUnit, false)}`)}</span>
-                                </div>
-                                ${priceItem.discountPrices?.map((discountPrice: DiscountPrice) => {
-                                    // We're displaying the first discount price.
-                                    // If it's the compact version, we're displaying only the last
-                                    if (!discountDisplayed && new Date(discountPrice.applicableTo) > new Date(discountPrice.currentDate)) {
-                                        discountDisplayed = true;
-                                        return html`
-                                            <div class="discount-price">
-                                                <span class="price">${msg(str`${discountPrice.pricePerUnit} ${this.formatCurrency(this.bookingPlan.currency)}/${this.getPeriodLabel(priceItem.rentDurationUnit, false)}`)}</span>
-                                                <span class="applicable-time">${this.getDiscountDateLabels(discountPrice)}</span>
-                                            </div>`
-                                    }
-                                })}
-                            </li>`
-                    }
-                    index++;
-                })}
-                </ul>
+                ${      // The title is not rendered in the small version
+                this.format === 'small' ? '' : html`<h3>${ msg('Pricing') }</h3>`}
+
+                ${ this.format !== 'small' ? html`
+                <h3>${ msg('Options') }</h3>
+                <div class="option-item">
+                    <vaadin-select class="option-value" .items="${this.items}"
+                                           .value="${this.items[0].value}"></vaadin-select><span>${msg('Child seats (9-18kg)')}</span>
+                </div>
+                <div class="option-item">
+                    <vaadin-select class="option-value" .items="${this.items}"
+                                          .value="${this.items[0].value}"></vaadin-select><span>${msg('Booster seats (18-45kg)')}</span>
+                </div>
+                <h3>${ msg('Insurance') }</h3>
+                <vaadin-form-layout>
+                    <vaadin-radio-group theme="vertical"  colspan="2" @value-changed="${this.updatePrice}">
+                        <vaadin-radio-button label="${msg('Insurance policy excess amount : 800€')}" checked>
+                        </vaadin-radio-button>
+                        <vaadin-radio-button label="${msg('Insurance policy excess amount : 0€')}"></vaadin-radio-button>
+                    </vaadin-radio-group>
+                   <!-- <vaadin-checkbox label="${msg('Broken glass insurance.')}"  checked></vaadin-checkbox>-->
+                </vaadin-form-layout>
+                `: '' }
             </div>
         `;
     }
 
+    private updatePrice(): void {
+
+    }
+
     static styles = css`
+        .option-item {
+            display: flex;
+            flex-direction: row;
+            gap: 12px;
+            align-items: center;
+        }
+        .option-value {
+            max-width: 64px;
+        }
         .wrapper {
             
         }
@@ -115,46 +154,9 @@ export class BookingPlanSummary extends LitElement {
             padding-left: 8px;
             padding-right: 8px;
         }
+        .wrapper .cancellation-policy, .wrapper .excess-deposit {
+            font-size: 12px;
+        }
     `
 
-    private getPeriodLabel(period: Period, plurial: boolean):string {
-        switch (period) {
-            case Period.DAYS:
-                return plurial ? msg('days') : msg('day');
-            case Period.HOURS:
-                return plurial ? msg('hours') : msg('hour');
-            case Period.MINUTES:
-                return plurial ? msg('minutes') : msg('minute');
-        }
-    }
-
-    private formatCurrency(currencyCode: string): string {
-        switch (currencyCode) {
-            case 'EUR':
-                return '€';
-            default:
-                return currencyCode;
-        }
-    }
-
-    private formatDate(date: Date): string {
-        const options: Intl.DateTimeFormatOptions = {
-            year: '2-digit',
-            month: 'numeric',
-            day: 'numeric'
-        };
-        return new Date(date).toLocaleDateString(undefined, options);
-    }
-
-    private getDiscountDateLabels(discountPrice: DiscountPrice):string {
-        let toDate: string = this.formatDate(discountPrice.applicableTo);
-        if (new Date(discountPrice.applicableFrom) < new Date(discountPrice.currentDate)) {
-            // The discount price already started : we're displaying only the end date
-            return msg(str`until ${toDate}`);
-        } else {
-            // The discount price is not applicable yet : we're displaying the from and the to date.
-            let fromDate: string = this.formatDate(discountPrice.applicableFrom);
-            return msg(str`From ${fromDate} to ${toDate}`);
-        }
-    }
 }

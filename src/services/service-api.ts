@@ -12,6 +12,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+import {AxiosRequestConfig} from "axios";
+
 export class ServiceApi {
 
     private static _instance: ServiceApi;
@@ -34,6 +36,17 @@ export class ServiceApi {
             throw new Error("The service is not intialized....");
         }
         return ServiceApi._instance;
+    }
+
+    get stdRequestOptions(): AxiosRequestConfig {
+        return {
+            baseURL: this._apiBaseUrl,
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "api-key": this._apiKey
+            }
+        };
     }
 
     get apiBaseUrl(): string {

@@ -14,13 +14,14 @@
  */
 import { LitElement, css, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import { VehicleInfo } from "./model/vehicle-info.ts";
 import { VehicleCategoryServiceApi } from "./services/vehicle-category-service-api.ts";
-import { VehicleCategory } from "./model/vehicle-category.ts";
 
 import './components/equipment-item.ts'
 import './components/booking-plan-summary.ts'
 import './vehicle-category-detail-dialog.ts'
+import { VehicleCategoryBookingPublic } from "./model/generated";
+import {VehiclePublicExt} from "./model/vehiclePublicExt.ts";
+import {VehicleCategoryBookingPublicImpl} from "./model/vehicleCategoryBookingPublicImpl.ts";
 
 /**
  * This is the root default element for the booking system.
@@ -29,20 +30,26 @@ import './vehicle-category-detail-dialog.ts'
 @customElement('vehicle-category-list-item')
 export class VehicleCategoryListItem extends LitElement {
 
-    @property({ type: VehicleCategory})
-    vehicleCategory: VehicleCategory = new VehicleCategory(
-        ".VehicleAsCategory",
-        "342dc365-bbbd-408b-b4e2-5c39ea2604a6",
-        true,
-        new VehicleInfo("342dc365-bbbd-408b-b4e2-5c39ea2604a6", "Kia Ceed"));
+    @property({ type: VehicleCategoryBookingPublicImpl })
+    vehicleCategory: VehicleCategoryBookingPublic =  ({
+        uuid : "342dc365-bbbd-408b-b4e2-5c39ea2604a6",
+        isExactVehicle: true,
+        vehicle: {
+            uuid: "342dc365-bbbd-408b-b4e2-5c39ea2604a6",
+            manufacturer: "KIA",
+            model: "Ceed",
+            shortDisplayName: "Kia Ceed",
+        },
+        name: "Kia Ceed",
+    });
 
     render() {
         return html`
       <div class="model" style="background-image: url(${VehicleCategoryServiceApi.instance().getVehicleImagePath(
-          this.vehicleCategory.vehicle.uuid)})">
+          this.vehicleCategory.vehicle.uuid!)})">
         <div class="label">${this.vehicleCategory.vehicle.shortDisplayName}</div>
         <ul class="equipments">
-            ${this.vehicleCategory.vehicle.equipmentsList?.map((equipment) => {
+            ${(this.vehicleCategory.vehicle as VehiclePublicExt).equipmentsList?.map((equipment) => {
                 return html`<li><equipment-item .equipment="${equipment}" format="small"></equipment-item></li>`
             })}
         </ul>

@@ -14,19 +14,26 @@
  */
 import {customElement, property} from "lit/decorators.js";
 import {css, html, LitElement} from "lit";
-import {VehicleCategory} from "./model/vehicle-category.ts";
-import {VehicleInfo} from "./model/vehicle-info.ts";
 import {VehicleCategoryServiceApi} from "./services/vehicle-category-service-api.ts";
+import {VehicleCategoryBookingPublicImpl} from "./model/vehicleCategoryBookingPublicImpl.ts";
+import {VehicleCategoryBookingPublic} from "./model/generated";
+import {VehiclePublicExt} from "./model/vehiclePublicExt.ts";
 
 @customElement('vehicle-category-detail')
 export class VehicleCategoryDetail extends LitElement {
 
-    @property({ type: VehicleCategory})
-    vehicleCategory: VehicleCategory = new VehicleCategory(
-        ".VehicleAsCategory",
-        "342dc365-bbbd-408b-b4e2-5c39ea2604a6",
-        true,
-        new VehicleInfo("342dc365-bbbd-408b-b4e2-5c39ea2604a6", "Kia Ceed"));
+    @property({ type: VehicleCategoryBookingPublicImpl})
+    vehicleCategory: VehicleCategoryBookingPublic = ({
+        uuid : "342dc365-bbbd-408b-b4e2-5c39ea2604a6",
+        isExactVehicle: true,
+        vehicle: {
+            uuid: "342dc365-bbbd-408b-b4e2-5c39ea2604a6",
+            manufacturer: "KIA",
+            model: "Ceed",
+            shortDisplayName: "Kia Ceed",
+        },
+        name: "Kia Ceed",
+    });
 
     render() {
         return html
@@ -34,9 +41,9 @@ export class VehicleCategoryDetail extends LitElement {
             `
       <div class="model">
           <img src="${VehicleCategoryServiceApi.instance().getVehicleImagePath(
-                  this.vehicleCategory.vehicle.uuid)}"/>
+                  this.vehicleCategory.vehicle.uuid!)}" class="vehicle-picture"/>
           <ul class="equipments full">
-              ${this.vehicleCategory.vehicle.equipmentsList?.map((equipment) => {
+              ${(this.vehicleCategory.vehicle as VehiclePublicExt).equipmentsList?.map((equipment) => {
                   return html`<li><equipment-item .equipment="${equipment}" format="full"></equipment-item></li>`
               })}
           </ul>
@@ -48,8 +55,14 @@ export class VehicleCategoryDetail extends LitElement {
     }
 
     static styles = css`
+        .model {
+            max-width: 1024px;
+        }
+        
         .model > img {
-            width: 100%;
+            max-width: 640px;
+            display: block;
+            margin: auto;
         }
         ul.equipments {
             list-style: none;

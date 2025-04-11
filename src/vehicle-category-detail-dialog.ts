@@ -14,37 +14,79 @@
  */
 import {customElement, property, state} from "lit/decorators.js";
 import {css, html, LitElement} from "lit";
-import {VehicleCategory} from "./model/vehicle-category.ts";
-import {VehicleInfo} from "./model/vehicle-info.ts";
-import {DialogOpenedChangedEvent} from "@vaadin/dialog";
-import {dialogRenderer} from "@vaadin/dialog/lit";
+import {Dialog, DialogOpenedChangedEvent} from "@vaadin/dialog";
+import {dialogFooterRenderer, dialogRenderer} from "@vaadin/dialog/lit";
 import {msg} from "@lit/localize";
 
 import '@vaadin/dialog'
 import './vehicle-category-detail.ts'
+import './components/short-booking-form.ts'
+import './components/booking-form.ts'
+import {VehicleCategoryBookingPublicImpl} from "./model/vehicleCategoryBookingPublicImpl.ts";
+import {VehicleCategoryBookingPublic} from "./model/generated";
 
 @customElement('vehicle-category-detail-dialog')
 export class VehicleCategoryDetailDialog extends LitElement {
 
-    @property({ type: VehicleCategory})
-    vehicleCategory: VehicleCategory = new VehicleCategory(
-        ".VehicleAsCategory",
-        "342dc365-bbbd-408b-b4e2-5c39ea2604a6",
-        true,
-        new VehicleInfo("342dc365-bbbd-408b-b4e2-5c39ea2604a6", "Kia Ceed"));
+    @property({ type: VehicleCategoryBookingPublicImpl})
+    vehicleCategory: VehicleCategoryBookingPublic = ({
+        uuid : "342dc365-bbbd-408b-b4e2-5c39ea2604a6",
+        isExactVehicle: true,
+        vehicle: {
+            uuid: "342dc365-bbbd-408b-b4e2-5c39ea2604a6",
+            manufacturer: "KIA",
+            model: "Ceed",
+            shortDisplayName: "Kia Ceed",
+        },
+        name: "Kia Ceed",
+    });
 
     @state()
     private _dialogOpened = false;
 
+    @state()
+    private _showFormSummary = false;
+
+    @state()
+    private _bookingForm = false;
+
     render() {
         return html`
-                  <vaadin-dialog
+                  <vaadin-dialog id="main-dialog"
         header-title="${ this.vehicleCategory.vehicle.shortDisplayName}"
+        
         .opened="${this._dialogOpened}"
         @opened-changed="${(event: DialogOpenedChangedEvent) => {
             this._dialogOpened = event.detail.value;
         }}"
-        ${dialogRenderer(() => html`<vehicle-category-detail .vehicleCategory="${this.vehicleCategory}"></vehicle-category-detail>`, [])}>
+        ${dialogRenderer(() => {
+            if (!this._bookingForm) {
+                return html`
+                    <vehicle-category-detail .vehicleCategory="${this.vehicleCategory}"></vehicle-category-detail>
+                    ${!this._showFormSummary ?
+                            html `<booking-form .vehicleCategory="${this.vehicleCategory}"></booking-form>` : ''}
+                    `
+            } else {
+                return html`
+                    <booking-form .vehicleCategory="${this.vehicleCategory}"></booking-form>`;
+            }
+        }, [])}
+        ${dialogFooterRenderer(
+                () => {
+                        if (!this._bookingForm && this._showFormSummary) {
+                            return html`
+                            <div style="display: flex; flex-direction: row; align-items: end; gap: 12px;">
+                              <short-booking-form></short-booking-form>
+                              <vaadin-button theme="primary" @click="${this.book}" style="margin-right: auto;">
+                                Book now...
+                              </vaadin-button>
+                            </div>` 
+                        } else {
+                            return html``;
+                        }
+                    },
+                []
+        )}>
       </vaadin-dialog>
       <vaadin-button @click="${this.open}">${ msg('Show more...') }</vaadin-button>
         `
@@ -55,12 +97,21 @@ export class VehicleCategoryDetailDialog extends LitElement {
             cursor: pointer;
         }
 
-        
+
     `
 
     public open() {
         console.log("Button clicked !!!")
         this._dialogOpened = true;
+    }
+
+    public book() {
+        let dialog: Dialog | null = this.renderRoot.querySelector('#main-dialog');
+        if (dialog) {
+            dialog.opened = false;
+            this._bookingForm = true;
+            dialog.opened = true;
+        }
     }
 
     public close() {

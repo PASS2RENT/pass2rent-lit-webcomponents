@@ -13,9 +13,10 @@
  * the License.
  */
 import {ServiceApi} from "./service-api.ts";
-import {VehicleCategory} from "../model/vehicle-category.ts";
 import {Equipment, EquipmentType} from "../model/equipment.ts";
-import {VehicleInfo} from "../model/vehicle-info.ts";
+import {VehicleCategoryBookingPublic, VehiclePublic} from "../model/generated";
+import {VehiclePublicExt} from "../model/vehiclePublicExt.ts";
+import {getBookableCategories} from "./api/partner-website-controller.ts";
 
 export class VehicleCategoryServiceApi {
 
@@ -31,39 +32,37 @@ export class VehicleCategoryServiceApi {
     /**
      * Get the list of all bookable categories (or vehicle)
      */
-    public getBookableCategories(): Promise<VehicleCategory[]> {
-        return fetch(ServiceApi.instance().apiBaseUrl + "/booking/vehicle-categories", {
-            headers: {
-                "Content-Type": "application/json",
-                "api-key": ServiceApi.instance().apiKey
-            }
-        }).then((response: Response) => {
-            return response.json();
-        }).then((vehicleCategories: VehicleCategory[]) => {
-            return vehicleCategories.map((vehicleCategory) => {
-                vehicleCategory.vehicle.equipmentsList = this.getEquiments(vehicleCategory.vehicle);
+    public getBookableCategories(): Promise<VehicleCategoryBookingPublic[]> {
+        return getBookableCategories(ServiceApi.instance().stdRequestOptions)
+            .then( (response) => {
+            return response.data.map((vehicleCategory) => {
+                if (vehicleCategory.vehicle) {
+                    (vehicleCategory.vehicle as VehiclePublicExt).equipmentsList = this.getEquiments(vehicleCategory.vehicle);
+                }
                 return vehicleCategory;
             });
         });
     }
 
-    private getEquiments(vehicleInfo: VehicleInfo): Equipment[] {
+    private getEquiments(vehicleInfo: VehiclePublic): Equipment[] {
         let equipments: Equipment[] = new Array<Equipment>();
-        if (vehicleInfo.transmission != null) {
-            equipments.push(new Equipment(EquipmentType.TRANSMISSION,
-                vehicleInfo.transmission.toString()));
-        }
-        if (vehicleInfo.doorsNumber != undefined && vehicleInfo.doorsNumber > 0) {
-            equipments.push(new Equipment(EquipmentType.DOORS_NUMBER,
-                vehicleInfo.doorsNumber.toString()));
-        }
-        if (vehicleInfo.seatsNumber != undefined) {
-            equipments.push(new Equipment(
-                EquipmentType.SEATS_NB, vehicleInfo.seatsNumber.toString()));
-        }
-        if (vehicleInfo.airConditioning != null && vehicleInfo.airConditioning) {
-            equipments.push(new Equipment(
-                EquipmentType.AIR_CONDITIONING, true.toString()));
+        if (vehicleInfo != null) {
+            if (vehicleInfo.transmission != undefined) {
+                equipments.push(new Equipment(EquipmentType.TRANSMISSION,
+                    vehicleInfo.transmission.toString()));
+            }
+            if (vehicleInfo.doorsNumber != undefined && vehicleInfo.doorsNumber > 0) {
+                equipments.push(new Equipment(EquipmentType.DOORS_NUMBER,
+                    vehicleInfo.doorsNumber.toString()));
+            }
+            if (vehicleInfo.seatsNumber != undefined) {
+                equipments.push(new Equipment(
+                    EquipmentType.SEATS_NB, vehicleInfo.seatsNumber.toString()));
+            }
+            if (vehicleInfo.airConditioning != undefined && vehicleInfo.airConditioning) {
+                equipments.push(new Equipment(
+                    EquipmentType.AIR_CONDITIONING, true.toString()));
+            }
         }
         /*if (vehicleInfo.includedDistance != null ||
             (noLimitDistance != null && noLimitDistance!)) {
@@ -77,6 +76,6 @@ export class VehicleCategoryServiceApi {
     }
 
     public getVehicleImagePath(vehicleUuid: string): string {
-        return `${ServiceApi.instance().apiBaseUrl}/vehicle/${vehicleUuid}/vehicle`;
+        return `${ServiceApi.instance().apiBaseUrl}/api/vehicle/${vehicleUuid}/vehicle`;
     }
 }
